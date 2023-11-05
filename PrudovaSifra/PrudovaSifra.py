@@ -1,7 +1,5 @@
 import os
 
-MODE_ENCRYPT = 0
-MODE_DECRYPT = 1
 MAX_TEXT_SIZE = 10000
 
 rc4_s = [i for i in range(256)]
@@ -14,9 +12,8 @@ def get_key(passwd):
     while len(rc4_k) < 256:
         for char in passwd:
             rc4_k.append(ord(char))
-        rc4_k.append(0) 
+        rc4_k.append(0)
     return rc4_k
-
 
 def rc4_init(key):
     global rc4_s
@@ -51,17 +48,10 @@ def read_file(name, max_size):
             memory = stream.read(max_size)
             count = len(memory)
     except FileNotFoundError:
-        print(f"Nepodařilo se načíst soubor '{name}'!")
+        print(f"File with name '{name}' was not found!")
     return memory, count
 
-def write_file(name, memory, count):
-    try:
-        with open(name, "wb") as stream:
-            stream.write(memory[:count])
-    except IOError:
-        print(f"Nepodařilo se zapsat soubor '{name}'!")
-
-def process(passwd, plain_text, count, mode):
+def process(passwd, plain_text, count):
     key = get_key(passwd)
     rc4_init(key)
 
@@ -76,28 +66,53 @@ def process(passwd, plain_text, count, mode):
     return result
 
 def encrypt(passwd, plain_text, count):
-    return process(passwd, plain_text, count, MODE_ENCRYPT)
+    return process(passwd, plain_text, count)
 
 def decrypt(passwd, cipher_text, count):
-    return process(passwd, cipher_text, count, MODE_DECRYPT)
+    return process(passwd, cipher_text, count)
+
+def count_alphanumeric_chars(data):
+    counter = 0
+    total_chars = len(data)
+    for byte in data:
+        char = chr(byte)
+        if char.isalnum():
+            counter += 1
+    return float(counter) / total_chars * 100
+    
 
 def main():
-    mode = MODE_DECRYPT
-    passwd = "123456"
-    input_filename = "./text1_enc.txt"
-    output_filename = "desifrovanie.txt"
+    input_filename = "./text3_enc.txt"
+    max_counter = 0
+    best_passwd = ""
+    combinations = []
 
-    input_text, count = read_file(input_filename, MAX_TEXT_SIZE)
-    if count == 0:
-        print("Vstupní text je prázdný!")
-        return
+    #input_text, count = read_file(input_filename, MAX_TEXT_SIZE)
+    #result = decrypt("555555", input_text, count)
+    #print(result.decode("utf-8"))
 
-    if mode == MODE_ENCRYPT:
-        result = encrypt(passwd, input_text, count)
-    elif mode == MODE_DECRYPT:
-        result = decrypt(passwd, input_text, count)
 
-    write_file(output_filename, result, count)
+    for number in range(100000, 1000000):
+        passwd = str(number)
+        input_text, count = read_file(input_filename, MAX_TEXT_SIZE)
+
+        if count > 0:
+            result = decrypt(passwd, input_text, count)
+            counter = count_alphanumeric_chars(result)
+
+            
+
+            combinations.append((passwd, counter))
+
+            if counter > max_counter:
+                max_counter = counter
+                best_passwd = passwd
+
+    print(f"Best combination: {best_passwd}, number of alpha/numeric chars: {max_counter:.2f}")
+
+
+
 
 if __name__ == "__main__":
     main()
+
