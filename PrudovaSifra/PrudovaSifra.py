@@ -1,4 +1,3 @@
-import os
 
 MAX_TEXT_SIZE = 10000
 
@@ -82,14 +81,12 @@ def count_alphanumeric_chars(data):
     
 
 def main():
-    input_filename = "./PrudovaSifra/text4_enc.txt"
+    input_filename = "./PrudovaSifra/text1_enc.txt"
+
+    """
     max_counter = 0
     best_passwd = ""
     combinations = []
-
-
-
-    """
     for number in range(100000, 1000000):
         passwd = str(number)
         input_text, count = read_file(input_filename, MAX_TEXT_SIZE)
@@ -106,14 +103,14 @@ def main():
                 max_counter = counter
                 best_passwd = passwd
 
-    print(f"Best combination: {best_passwd}, number of alpha/numeric chars: {max_counter:.2f}")
+    print(f"Best combination: {best_passwd}, number of alpha/numeric chars: {max_counter:.2f}%")
     """
     #key 1 : 123456
     #key 2 : 555555
     #key 3 : 987654
     #key 4 : 597135
     input_text, count = read_file(input_filename, MAX_TEXT_SIZE)
-    result = decrypt("597135", input_text, count)
+    result = decrypt("123456", input_text, count)
     print(result.decode("utf-8"))
 
 

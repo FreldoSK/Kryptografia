@@ -66,7 +66,7 @@ def find_coutn_of( text, n= 3):
     dist_tex.sort()
     print(dist_tex)
 
-    mux_n = range(2,42)#[4, 5, 6, 7, 8, 9, 10] # 2, 3,
+    mux_n = range(2,30)#[4, 5, 6, 7, 8, 9, 10] # 2, 3,
     num_of = [0] * len(mux_n)
     for i in range(len(dist_tex)):
         for m_i in range(len(mux_n)):
@@ -137,7 +137,6 @@ def find_key( in_text, key_len, eng_enab= True):
     if eng_enab == True:
         frekv_uni_prob = frekv_prob
     else: frekv_uni_prob = frekv_slov_prob
-
     cesar_strings = []
     cesar_strings = split_text(clr_text, key_len)
     massag_prob = get_probabilities(clr_text)
@@ -147,9 +146,9 @@ def find_key( in_text, key_len, eng_enab= True):
     distanc_of_prob = get_distance(frekv_uni_prob, massag_prob)
     print(distanc_of_prob)
     from math import sqrt
-    print(sqrt(distanc_of_prob))
+    print(sqrt(distanc_of_prob)) #Zoberiem všetky znaky, ktoré boli zaheslované prvým znakom hesla get_probabilities(cesar_strings[0])
     probabilities = get_probabilities(cesar_strings[0])
-    print(get_distance(frekv_uni_prob, probabilities))
+    print(get_distance(frekv_uni_prob, probabilities)) # keď táto pravdepodobnosť sa blíži pravdepodobnosti výskytu v rovnomernom rozdelení, p ~ 1/26, alebo 1/n ak by bolo viac znakov
 
     print("distance betwen prob of eng and encr text")
     for i in range(0, len(alphab_a)):
