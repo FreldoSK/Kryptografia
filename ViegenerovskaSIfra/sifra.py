@@ -1,3 +1,4 @@
+
 # pravdepodobost vyskitu znakov v Ang
 frekv_prob =    [ 0.0657, 0.0126, 0.0399, 0.0322, 0.0957, 0.0175, 0.0145, 0.0404, 0.0701, 0.0012, 0.0049,
                    0.0246, 0.0231, 0.0551, 0.0603, 0.0298, 0.0005, 0.0576, 0.0581, 0.0842, 0.0192, 0.0081,
@@ -36,7 +37,7 @@ def viegenere_decrypt( cipher_t, key):
                 key_pos = 0
         else:
             plain_t+= c_ch
-    print("Text from decrypting: %s" %plain_t)
+    print("\nText from decrypting: %s" %plain_t)
     return plain_t
 # funkcia: citanie zo suboru
 def read_file( filename ):
@@ -58,7 +59,7 @@ def kasiski( text, n ):
                 print(i, j, j - i, t1, t2)
                 distance.append(j - i)
     return distance
-# funkcia: vola funkciu kasiski s defaltne trojicami rovnakych znakov, vrati delitele vydialenosti a ich pocetnost
+# funkcia: vola funkciu kasiski s defaltne trojicami rovnakych znakov, vrati delitele vzdialenosti a ich pocetnost
 def find_coutn_of( text, n= 3):
     clr_text = clear_space( text )
     print(clr_text)
@@ -66,7 +67,7 @@ def find_coutn_of( text, n= 3):
     dist_tex.sort()
     print(dist_tex)
 
-    mux_n = range(2,30)#[4, 5, 6, 7, 8, 9, 10] # 2, 3,
+    mux_n = range(2,42)#[4, 5, 6, 7, 8, 9, 10] # 2, 3,
     num_of = [0] * len(mux_n)
     for i in range(len(dist_tex)):
         for m_i in range(len(mux_n)):
@@ -136,7 +137,9 @@ def find_key( in_text, key_len, eng_enab= True):
     clr_text = clear_space(in_text)
     if eng_enab == True:
         frekv_uni_prob = frekv_prob
-    else: frekv_uni_prob = frekv_slov_prob
+    else: 
+        frekv_uni_prob = frekv_slov_prob
+
     cesar_strings = []
     cesar_strings = split_text(clr_text, key_len)
     massag_prob = get_probabilities(clr_text)
@@ -144,17 +147,21 @@ def find_key( in_text, key_len, eng_enab= True):
 
     print_probabilities(frekv_uni_prob, massag_prob)
     distanc_of_prob = get_distance(frekv_uni_prob, massag_prob)
-    print(distanc_of_prob)
-    from math import sqrt
-    print(sqrt(distanc_of_prob)) #Zoberiem všetky znaky, ktoré boli zaheslované prvým znakom hesla get_probabilities(cesar_strings[0])
-    probabilities = get_probabilities(cesar_strings[0])
-    print(get_distance(frekv_uni_prob, probabilities)) # keď táto pravdepodobnosť sa blíži pravdepodobnosti výskytu v rovnomernom rozdelení, p ~ 1/26, alebo 1/n ak by bolo viac znakov
+    # index koincidencie textu
 
+    probabilities = get_probabilities(cesar_strings[0])
+    # index koincidencie pre znaky sifrovene 1. znakom hesal
+    # index koincidencie je pravdepodobnost priblizne rovna pravdepodobnosti vyskitu 1/n znakov P= (1/26)
+    # tak je pouzita sprvna jazykova analzyza 
+    print(get_distance(frekv_uni_prob, probabilities))
+
+    # hlada znaky hesla 
     print("distance betwen prob of eng and encr text")
     for i in range(0, len(alphab_a)):
         print("%c\t%.5f" % (alphab_a[i], (get_distance(frekv_uni_prob, probabilities))))
         rotate_left(probabilities)
     str_k = ""
+    #cesar_string = cesar_char 
     for cesar_string in cesar_strings:
         probabilities = get_probabilities(cesar_string)
         possibilities = []
@@ -168,24 +175,32 @@ def find_key( in_text, key_len, eng_enab= True):
 
     plain_text= viegenere_decrypt(file_text, str_k)
     print(plain_text) # viegenere_encrypt(plain_text, str_k)
-    return plain_text
+    return plain_text, str_k
+
+
 
 
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
-    file_text = read_file("./uc1_krypto_2022_u1_text2_enc.txt")
+   file_text = ""
+   file_text = read_file("./ViegenerovskaSifra/uc1_krypto_2022_u1_text1_enc.txt")
 
-    find_coutn_of( file_text)
-    # po najdeni spravej dlzky hesla treba prepisat key_try
-    key_try=25
+   find_coutn_of(file_text)
+   # po najdeni spravej dlzky hesla treba prepisat key_try
+   key_try = 15
+   heslo = "" 
+   enc_now_text = ""
+   if key_try != 0:
+       enc_now_text, heslo = find_key(file_text, key_try, False)
 
-    enc_now_text = ""
-    if key_try != 0:     
-        enc_now_text= find_key( file_text, key_try, eng_enab= False)
-    # vypise prvu 1/5 textu na kontrlou spravnosti desifrovania, podla dlykz hesla
-    if enc_now_text != "":
-        for i in range(0,len(enc_now_text)//5, key_try):
-            print("Test %s\n" %enc_now_text[i:(key_try+i)])
-    # poznamky:
-    # key of text1 QWERTYUIOPASDFG long 15 ok in slov
-    # key of text2 AUZDMZRNFUXQSXHORWQLCLZLS long 25 ok in slov
+   # vypise prvu 1/5 textu na kontrlou spravnosti desifrovania, podla dlykz hesla
+   #enc_now_text = viegenere_decrypt(file_text, heslo) 
+   if enc_now_text != "":
+        for i in range(0, len(enc_now_text) // 5, key_try):
+            print("Test %s\n" % enc_now_text[i:(key_try + i)])
+   # poznamky:
+   # key of text1 QWERTYUIOPASDFG long 15 ok in slov
+   # key of text2 AUZDMZRNFUXQSXHORWQLCLZLS long 25 ok in slov
+   # key of text3 LIYZKFOREGYSDTRQNTK  long 19 ok in slov
+   # key of text4 IDGKZQNOMYNTJOUIB  long 17 ok in eng
+   # length of key <15, 25>
