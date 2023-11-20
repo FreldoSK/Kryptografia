@@ -181,17 +181,16 @@ def find_key( in_text, key_len, eng_enab):
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
    file_text = ""
-   file_text = read_file("./ViegenerovskaSifra/uc1_krypto_2022_u1_text4_enc.txt")
+   file_text = read_file("./ViegenerovskaSifra/uc1_krypto_2022_u1_text2_enc.txt")
 
    find_coutn_of(file_text)
-   key_try = 17
+   key_try = 0
    heslo = "" 
    enc_now_text = ""
    if key_try != 0:
        enc_now_text, heslo = find_key(file_text, key_try, False)
 
    # vypise prvu 1/5 textu na kontrolou spravnosti desifrovania, podla dlzky hesla
-   #enc_now_text = viegenere_decrypt(file_text, heslo)
    print("\nTESTIKY\n") 
    if enc_now_text != "":
         for i in range(0, len(enc_now_text) // 5, key_try):
