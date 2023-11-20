@@ -131,8 +131,7 @@ def rotate_left(array):
         array[i] = array[i+1]
     array[len(array) -1] = tmp
     return array
-# funkcia: po zadani prepokladanej dlyky hesla key_len, vypise heslo a vrati desifrovany text
-# eng_enab defaltne True, je priznak ci ma porovnavat sifrovani text s pravdepodobnostou vyskitu v Ang alebo v Slov
+
 def find_key( in_text, key_len, eng_enab):
     clr_text = clear_space(in_text)
     if eng_enab:
