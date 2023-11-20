@@ -133,9 +133,9 @@ def rotate_left(array):
     return array
 # funkcia: po zadani prepokladanej dlyky hesla key_len, vypise heslo a vrati desifrovany text
 # eng_enab defaltne True, je priznak ci ma porovnavat sifrovani text s pravdepodobnostou vyskitu v Ang alebo v Slov
-def find_key( in_text, key_len, eng_enab= True):
+def find_key( in_text, key_len, eng_enab):
     clr_text = clear_space(in_text)
-    if eng_enab == True:
+    if eng_enab:
         frekv_uni_prob = frekv_prob
     else: 
         frekv_uni_prob = frekv_slov_prob
@@ -153,7 +153,7 @@ def find_key( in_text, key_len, eng_enab= True):
     # index koincidencie pre znaky sifrovene 1. znakom hesal
     # index koincidencie je pravdepodobnost priblizne rovna pravdepodobnosti vyskitu 1/n znakov P= (1/26)
     # tak je pouzita sprvna jazykova analzyza 
-    print(get_distance(frekv_uni_prob, probabilities))
+    print("index koenc. = " + str(get_distance(frekv_uni_prob, probabilities)))
 
     # hlada znaky hesla 
     print("distance betwen prob of eng and encr text")
@@ -171,10 +171,9 @@ def find_key( in_text, key_len, eng_enab= True):
             rotate_left(probabilities)
         print(min(possibilities)[1])
         str_k += min(possibilities)[1]
-    print(str_k)  # "QWERTYUEOPASDFG"
+    print(str_k)  
 
     plain_text= viegenere_decrypt(file_text, str_k)
-    print(plain_text) # viegenere_encrypt(plain_text, str_k)
     return plain_text, str_k
 
 
@@ -183,24 +182,25 @@ def find_key( in_text, key_len, eng_enab= True):
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
    file_text = ""
-   file_text = read_file("./ViegenerovskaSifra/uc1_krypto_2022_u1_text1_enc.txt")
+   file_text = read_file("./ViegenerovskaSifra/uc1_krypto_2022_u1_text4_enc.txt")
 
    find_coutn_of(file_text)
-   # po najdeni spravej dlzky hesla treba prepisat key_try
-   key_try = 15
+   key_try = 17
    heslo = "" 
    enc_now_text = ""
    if key_try != 0:
        enc_now_text, heslo = find_key(file_text, key_try, False)
 
-   # vypise prvu 1/5 textu na kontrlou spravnosti desifrovania, podla dlykz hesla
-   #enc_now_text = viegenere_decrypt(file_text, heslo) 
+   # vypise prvu 1/5 textu na kontrolou spravnosti desifrovania, podla dlzky hesla
+   #enc_now_text = viegenere_decrypt(file_text, heslo)
+   print("\nTESTIKY\n") 
    if enc_now_text != "":
         for i in range(0, len(enc_now_text) // 5, key_try):
             print("Test %s\n" % enc_now_text[i:(key_try + i)])
-   # poznamky:
-   # key of text1 QWERTYUIOPASDFG long 15 ok in slov
-   # key of text2 AUZDMZRNFUXQSXHORWQLCLZLS long 25 ok in slov
-   # key of text3 LIYZKFOREGYSDTRQNTK  long 19 ok in slov
-   # key of text4 IDGKZQNOMYNTJOUIB  long 17 ok in eng
+  
+
+   # key of text1 QWERTYUIOPASDFG lenght_of_key 15 sk
+   # key of text2 AUZDMZRNFUXQSXHORWQLCLZLS lenght_of_key 25 sk
+   # key of text3 LIYZKFOREGYSDTRQNTK  lenght_of_key 19 sk
+   # key of text4 IDGKZQNOMYNTJOUIB  lenght_of_key 17 en
    # length of key <15, 25>
