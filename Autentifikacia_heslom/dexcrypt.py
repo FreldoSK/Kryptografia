@@ -11,7 +11,7 @@ def crypt(passwd, salt):
 
 
 shadow_entries = {}
-with open(r"D:\projekty\VScode\Autentifikacia_heslom\shadow1.txt", "r") as file:
+with open(r"..\Autentifikacia_heslom\shadow1.txt", "r") as file:
     for line in file:
         parts = line.strip().split(':')
         if len(parts) == 3:
