@@ -1,44 +1,29 @@
-import itertools
-import string
-from hashlib import md5
-from base64 import b64encode
-from concurrent.futures import ThreadPoolExecutor, as_completed
+import base64
 
-def crypt(passwd, salt):
-    m = md5()
-    m.update(passwd.encode('utf-8'))
-    m.update(salt.encode('utf-8'))
-    return b64encode(m.digest()).decode('utf-8')
+def extract_and_convert_hashes(input_file_path, output_file_path):
+    with open(input_file_path, 'r', encoding='utf-8') as file:
+        lines = file.readlines()
 
-def attempt_passwords(username, salt, hashed):
-    for length in range(4, 5):  
-        for passwd in itertools.product(string.ascii_letters + string.digits, repeat=length):
-            generated_passwd = ''.join(passwd)
-            print(f"Trying password: {generated_passwd} for user: {username}")  
-            if crypt(generated_passwd, salt) == hashed:
-                return username, generated_passwd
-    return username, None
-
-shadow_entries = {}
-with open(r".\Autentifikacia_heslom\shadow1.txt", "r") as file:
-    for line in file:
+    login_hash_pairs = []
+    for line in lines:
         parts = line.strip().split(':')
         if len(parts) == 3:
-            username, salt, hashed = parts
-            shadow_entries[username] = (salt, hashed)
+            login, _, hash_b64 = parts  # Zmena tu: ignorujeme soľ
+            try:
+                hash_bytes = base64.b64decode(hash_b64)
+                hash_hex = hash_bytes.hex()
+                login_hash_pairs.append(f"{login}:{hash_hex}")  # Zmena tu: pridávame len login a hash
+            except Exception as e:
+                print(f"Error decoding base64: {e}")
+                continue  # If an error occurs during decoding, skip this line
 
-found_passwords = {}
+    with open(output_file_path, 'w', encoding='utf-8') as new_file:
+        for pair in login_hash_pairs:
+            new_file.write(pair + '\n')
 
-with ThreadPoolExecutor(max_workers=10) as executor:
-    futures = {executor.submit(attempt_passwords, user, data[0], data[1]): user for user, data in shadow_entries.items()}
-    for future in as_completed(futures):
-        user, found_passwd = future.result()
-        if found_passwd:
-            found_passwords[user] = found_passwd
-            print(f"Password found: {found_passwd} for user: {user}")
-        else:
-            print(f"No password found for {user}")
+# Replace these paths with the actual paths on your system
+input_file_path = 'D:\\projekty\\VScode\\Autentifikacia_heslom\\shadow1.txt'
+output_file_path = 'D:\\projekty\\VScode\\Autentifikacia_heslom\\login_hash.txt'
 
-
-for user, passwd in found_passwords.items():
-    print(f"Password for {user} is: {passwd}")
+# Call the function with the file paths
+extract_and_convert_hashes(input_file_path, output_file_path)
