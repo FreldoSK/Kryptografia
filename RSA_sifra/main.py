@@ -65,7 +65,7 @@ def factorize_via_6k_long_numbers(n):
     return factors
 
 
-# Funkcia pre pocitanie faktorizacie cez 6k +-1, boj proti log hodnoty
+# Funkcia pre pocitanie faktorizacie cez 6k +-1
 def factorize_via_6k(n):
     factors = []
     counter = 0 
